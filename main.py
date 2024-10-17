@@ -1,13 +1,13 @@
 # import uvicorn
 from fastapi import FastAPI
 from fastapi import APIRouter
-import settings
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
+# import settings
+# from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+# from sqlalchemy.orm import sessionmaker
 from users import user_router
 
-engine = create_async_engine(settings.DATABASE_URL)
-session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
+# engine = create_async_engine(settings.DATABASE_URL)
+# session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 app = FastAPI(title='Pizza API', version='0.0.1')
 

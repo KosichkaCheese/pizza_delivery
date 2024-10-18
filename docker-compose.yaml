@@ -12,6 +12,8 @@ services:
       - '8000:8000'
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/pizza
+    volumes:
+      - .:/app
     depends_on:
       - db
 
@@ -29,4 +31,5 @@ services:
       - '5438:5432'
 
 volumes:
+  .:
   pgdata:

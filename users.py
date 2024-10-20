@@ -1,15 +1,17 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from models import Usercreate, Useredit
+# from sqlalchemy.ext.asyncio import AsyncSession
 # from main import session
-from db import UserInteract, db_session
+from db import UserInteract, db_session, AuthInteract
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
 @user_router.post("/create_user")
-async def create_user(user: Usercreate):
+async def create_user(user: Usercreate, password: str):
     async with db_session() as session:
         async with session.begin():
             user_data = UserInteract(session)
+            auth = AuthInteract(session)
             try:
                 new_user = await user_data.create_user(
                     email=user.email,
@@ -18,6 +20,9 @@ async def create_user(user: Usercreate):
                     phone=user.phone, 
                     address=user.address
                 )
+                new_auth = await auth.create_auth(email=user.email, password=password)
+                if new_auth:
+                    print(password)
             except Exception as e:
                 print("error while creating user:", e)
                 return {"status": 500, "message": "Internal server error"}
@@ -74,3 +79,18 @@ async def update_user(user: Useredit):
                 print("error while updating user:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": updated_user}
+        
+@user_router.get("/check_auth")
+async def check_auth(email: str, password: str):
+    async with db_session() as session:
+        async with session.begin():
+            auth = AuthInteract(session)
+            try:
+                auth_result = await auth.check_auth(email=email, password=password)
+            except Exception as e:
+                print("error while checking auth:", e)
+                return {"status": 500, "message": "Internal server error"}
+            if auth_result:
+                return {"status": 200, "message": "Authentication successful"}
+            else:
+                return {"status": 401, "message": "Authentication failed"}

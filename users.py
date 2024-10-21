@@ -1,8 +1,11 @@
 from fastapi import APIRouter, Depends
-from models import Usercreate, Useredit
+import uuid
+from uuid import UUID
+from models import Usercreate, Useredit, Pizza
 # from sqlalchemy.ext.asyncio import AsyncSession
 # from main import session
-from db import UserInteract, db_session, AuthInteract
+from db import UserInteract, db_session, AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract
+from datetime import datetime
 
 user_router = APIRouter(prefix="/users", tags=["users"])
 
@@ -94,3 +97,34 @@ async def check_auth(email: str, password: str):
                 return {"status": 200, "message": "Authentication successful"}
             else:
                 return {"status": 401, "message": "Authentication failed"}
+            
+@user_router.post("/add_to_cart")
+async def add_to_cart(email: str, pizza_id: UUID, count: int):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                order = OrderInteract(session)
+                pizza_interact = PizzaInteract(session)
+                pizza = await pizza_interact.get_pizza(id=pizza_id)
+                cur_order = await order.current_order(email=email)
+                if not cur_order:
+                    await order.create_order(id=uuid.uuid4(), user_email=email, time=datetime.now(), summ=(pizza.cost*count))
+                    cur_order = await order.current_order(email=email)
+                order_content = OrderContentInteract(session)
+                await order_content.add_order_content(order_id=cur_order.id, pizza_id=pizza_id, count=count)
+            except Exception as e:
+                print("error while adding to cart:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "message": "Pizza added to cart"}
+            
+@user_router.post("/create_pizza")
+async def create_pizza(pizza: Pizza):               
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                pizza_interact = PizzaInteract(session)
+                new_pizza = await pizza_interact.create_pizza(id=uuid.uuid4(), name=pizza.name, cost=pizza.cost, description=pizza.description, image=pizza.image)
+            except Exception as e:
+                print("error while creating pizza:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "data": new_pizza}

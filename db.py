@@ -4,7 +4,8 @@ import settings
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, relationship
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, DECIMAL, Integer, Text
+from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, DECIMAL, Integer, Text, select
+from datetime import datetime
 
 ADMIN=True
 USER=False
@@ -115,8 +116,8 @@ class OrderInteract:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
 
-    async def create_order(self, user_email: str, time: str, summ: float) -> Order:
-        order = Order(user_email=user_email, time=time, summ=summ)
+    async def create_order(self, id: UUID, user_email: str, time: datetime, summ: float) -> Order:
+        order = Order(id=id, user_email=user_email, time=time, summ=summ)
         self.db_session.add(order)
         return order
     
@@ -124,12 +125,20 @@ class OrderInteract:
         order = await self.db_session.get(Order, id)
         return order
     
+    async def current_order(self, email: str) -> Order:
+        res = await self.db_session.execute(select(Order).where(Order.user_email == email, Order.status == 0))
+        cur_order = res.scalars().first()
+        return cur_order
+    
+    #изменить сумму
+    #изменить статус + поменять время на актуальное
+    
 class PizzaInteract:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session
     
-    async def create_pizza(self, name: str, cost: float, description: str, image: str) -> Pizza:
-        pizza = Pizza(name=name, cost=cost, description=description, image=image)
+    async def create_pizza(self, id: UUID, name: str, cost: float, description: str, image: str) -> Pizza:
+        pizza = Pizza(id=id, name=name, cost=cost, description=description, image=image)
         self.db_session.add(pizza)
         return pizza
 

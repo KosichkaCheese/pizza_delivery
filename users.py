@@ -117,14 +117,3 @@ async def add_to_cart(email: str, pizza_id: UUID, count: int):
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "message": "Pizza added to cart"}
             
-@user_router.post("/create_pizza")
-async def create_pizza(pizza: Pizza):               
-    async with db_session() as session:
-        async with session.begin():
-            try:
-                pizza_interact = PizzaInteract(session)
-                new_pizza = await pizza_interact.create_pizza(id=uuid.uuid4(), name=pizza.name, cost=pizza.cost, description=pizza.description, image=pizza.image)
-            except Exception as e:
-                print("error while creating pizza:", e)
-                return {"status": 500, "message": "Internal server error"}
-            return {"status": 200, "data": new_pizza}

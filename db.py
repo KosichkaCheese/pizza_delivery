@@ -31,7 +31,7 @@ class User(Base):
     phone = Column(String, unique=True)
     address = Column(String, default='')
     
-    orders = relationship("Order", back_populates="user")
+    orders = relationship("Order", back_populates="user", cascade="all, delete-orphan")
 
 class Order(Base):
     __tablename__ = 'order'
@@ -130,6 +130,14 @@ class OrderInteract:
         cur_order = res.scalars().first()
         return cur_order
     
+    async def get_order_list(self) -> list[Order]:
+        res = await self.db_session.execute(select(Order))
+        return res.scalars().all()
+    
+    async def get_orders_by_status(self, status: int) -> list[Order]:
+        res = await self.db_session.execute(select(Order).where(Order.status == status))
+        return res.scalars().all()
+    
     #изменить сумму
     #изменить статус + поменять время на актуальное
     
@@ -146,6 +154,26 @@ class PizzaInteract:
         pizza = await self.db_session.get(Pizza, id)
         return pizza
 
+    async def delete_pizza(self, id: UUID) -> bool:
+        pizza = await self.db_session.get(Pizza, id)
+        if pizza:
+            await self.db_session.delete(pizza)
+            await self.db_session.commit() 
+            return True
+        return False
+    
+    async def get_pizza_list(self) -> list[Pizza]:
+        res = await self.db_session.execute(select(Pizza))
+        return res.scalars().all()
+    
+    async def update_pizza(self, id: UUID, name: str, cost: float, description: str, image: str) -> Pizza:
+        pizza = await self.db_session.get(Pizza, id)
+        for attr, value in zip(["name", "cost", "description", "image"], [name, cost, description, image]):
+            if value is not None:
+                setattr(pizza, attr, value)
+        return pizza         
+        
+    
 class OrderContentInteract:
     def __init__(self, db_session: AsyncSession):
         self.db_session = db_session

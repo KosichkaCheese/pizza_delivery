@@ -22,6 +22,12 @@ class Pizza(BaseModel):
     description: Optional[str]=None
     image: Optional[str]=None
 
+class Pizzaedit(BaseModel):
+    name: Optional[str] = None
+    cost: Optional[float] = None
+    description: Optional[str] = None
+    image: Optional[str] = None
+    
 class Order(BaseModel):
     user_email: str
     time: datetime

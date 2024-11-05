@@ -54,13 +54,16 @@ async def delete_user(email: str):
             try:
                 user = await user_data.get_user(email=email)
                 if user:
-                    await session.delete(user)
+                    res = await session.delete(user)
                 else:
                     return {"status": 404, "message": "User not found"}
             except Exception as e:
                 print("error while deleting user:", e)
                 return {"status": 500, "message": "Internal server error"}
-            return {"status": 200, "message": "User deleted successfully"}
+            if res:
+                return {"status": 200, "message": "User deleted successfully"}
+            else:
+                return {"status": 500, "message": "Internal server error"}
         
 @user_router.put("/update_user")
 async def update_user(user: Useredit):

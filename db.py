@@ -144,47 +144,17 @@ class OrderInteract:
     async def get_order_list(self) -> list[Order]:
         res = await self.db_session.execute(select(Order))
         orders = res.scalars().all()
-        return [
-            {
-                "id": order.id,
-                "user_email": order.user_email,
-                "time": order.time,
-                "summ": order.summ,
-                "status": order.status,
-                "address": order.address,
-                "phone": order.phone
-            } for order in orders
-        ]
+        return orders
     
     async def get_orders_by_status(self, status: int) -> list[Order]:
         res = await self.db_session.execute(select(Order).where(Order.status == status))
         orders = res.scalars().all()
-        return [
-            {
-                "id": order.id,
-                "user_email": order.user_email,
-                "time": order.time,
-                "summ": order.summ,
-                "status": order.status,
-                "address": order.address,
-                "phone": order.phone
-            } for order in orders
-        ]
+        return orders
     
     async def get_user_orders(self, u_email: str) -> list[Order]:
-        res = await self.db_session.execute(select(Order).where((Order.user_email == u_email) & (Order.status != 0)).options(joinedload(Order.user)))
+        res = await self.db_session.execute(select(Order).where((Order.user_email == u_email) & (Order.status != 0)))
         orders = res.scalars().all()
-        return [
-            {
-                "id": order.id,
-                "user_email": order.user.email,
-                "time": order.time,
-                "summ": order.summ,
-                "status": order.status,
-                "address": order.user.address,
-                "phone": order.user.phone
-            } for order in orders
-        ]
+        return orders
     
     async def place_order(self, id: UUID, time: datetime, summ: float, address: str, phone: str) -> Order:
         order = await self.db_session.get(Order, id)

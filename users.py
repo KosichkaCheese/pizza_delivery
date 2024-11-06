@@ -54,7 +54,7 @@ async def delete_user(email: str):
             try:
                 user = await user_data.get_user(email=email)
                 if user:
-                    res = await session.delete(user)
+                    res = await user_data.delete_user(email=email)
                 else:
                     return {"status": 404, "message": "User not found"}
             except Exception as e:
@@ -108,15 +108,56 @@ async def add_to_cart(email: str, pizza_id: UUID, count: int):
             try:
                 order = OrderInteract(session)
                 pizza_interact = PizzaInteract(session)
+                user_interact = UserInteract(session)
+                user = await user_interact.get_user(email=email)
                 pizza = await pizza_interact.get_pizza(id=pizza_id)
                 cur_order = await order.current_order(email=email)
                 if not cur_order:
-                    await order.create_order(id=uuid.uuid4(), user_email=email, time=datetime.now(), summ=(pizza.cost*count))
+                    await order.create_order(id=uuid.uuid4(), user_email=email, time=datetime.now(), summ=(pizza.cost*count), address=user.address, phone=user.phone)
                     cur_order = await order.current_order(email=email)
                 order_content = OrderContentInteract(session)
-                await order_content.add_order_content(order_id=cur_order.id, pizza_id=pizza_id, count=count)
+                await order_content.add_order_content(order_id=cur_order.id, pizza_id=pizza_id, count=count, id=uuid.uuid4())
             except Exception as e:
                 print("error while adding to cart:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "message": "Pizza added to cart"}
-            
+
+@user_router.get("/get_user_orders")
+async def get_user_orders(email: str):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                order_interact = OrderInteract(session)
+                orders = await order_interact.get_user_orders(email)
+            except Exception as e:
+                print("error while getting orders:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "data": orders}
+
+@user_router.put("/place_order")
+async def place_order(email: str, address: str=None, phone: str=None):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                order = OrderInteract(session)
+                cur_order = await order.current_order(email=email)
+                if not cur_order:
+                    return {"status": 404, "message": "cart is empty"}
+                if not address or not phone:
+                    user_interact = UserInteract(session)
+                    user = await user_interact.get_user(email=email)
+                    if not phone:
+                        phone = user.phone
+                    if not address:
+                        address = user.address
+                order_content_interact = OrderContentInteract(session)
+                order_content = await order_content_interact.get_order_content(order_id=cur_order.id)
+                new_summ = 0
+                for order_content in order_content:
+                    new_summ += order_content["pizza_cost"] * order_content["count"]
+                cur_time = datetime.now()
+                res = await order.place_order(id=cur_order.id, time=cur_time, summ=new_summ, address=address, phone=phone)
+                return {"status": 200, "data": res}
+            except Exception as e:
+                print("error while placing order:", e)
+

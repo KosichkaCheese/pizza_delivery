@@ -16,7 +16,7 @@ async def create_pizza(pizza: Pizza):
         async with session.begin():
             try:
                 pizza_interact = PizzaInteract(session)
-                new_pizza = await pizza_interact.create_pizza(id=uuid.uuid4(), name=pizza.name, cost=pizza.cost, description=pizza.description, image=pizza.image)
+                new_pizza = await pizza_interact.create_pizza(id=uuid.uuid4(), available=pizza.available, name=pizza.name, cost=pizza.cost, description=pizza.description, image=pizza.image)
             except Exception as e:
                 print("error while creating pizza:", e)
                 return {"status": 500, "message": "Internal server error"}
@@ -70,6 +70,7 @@ async def update_pizza(id: UUID, pizza_data: Pizzaedit):
 
                 updated_pizza = await pizza_data_interact.update_pizza(
                     id=id,
+                    available=pizza_data.available,
                     name=pizza_data.name,
                     cost=pizza_data.cost,
                     description=pizza_data.description,

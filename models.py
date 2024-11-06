@@ -17,12 +17,14 @@ class Useredit(BaseModel):
     address: Optional[str]=None
     
 class Pizza(BaseModel):
+    available: Optional[bool]=True
     name: str
     cost: float
     description: Optional[str]=None
     image: Optional[str]=None
 
 class Pizzaedit(BaseModel):
+    available: Optional[bool]=None
     name: Optional[str] = None
     cost: Optional[float] = None
     description: Optional[str] = None

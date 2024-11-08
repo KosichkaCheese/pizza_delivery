@@ -1,17 +1,11 @@
-from fastapi import APIRouter, Depends
 import uuid
 from uuid import UUID
-from models import Usercreate, Useredit, Pizza, Pizzaedit
-# from sqlalchemy.ext.asyncio import AsyncSession
-# from main import session
-from db import UserInteract, db_session, AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract
-from datetime import datetime
+from api.models import Pizza, Pizzaedit
+from db.db import db_session
+from db.db_repository import OrderInteract, PizzaInteract
 
 
-admin_router = APIRouter(prefix="/admin", tags=["admin"])
-@admin_router.post("/create_pizza")
-async def create_pizza(pizza: Pizza):               
-    
+async def create_pizza_service(pizza: Pizza):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -21,9 +15,9 @@ async def create_pizza(pizza: Pizza):
                 print("error while creating pizza:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": new_pizza}
-        
-@admin_router.delete("/delete_pizza")
-async def delete_pizza(id: UUID):
+
+
+async def delete_pizza_service(id: UUID):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -33,9 +27,9 @@ async def delete_pizza(id: UUID):
                 print("error while deleting pizza:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "message": "Pizza deleted successfully"}
-        
-@admin_router.get("/get_pizza")
-async def get_pizza(id: UUID):
+
+
+async def get_pizza_service(id: UUID):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -45,9 +39,9 @@ async def get_pizza(id: UUID):
                 print("error while getting pizza:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": pizza}
-        
-@admin_router.get("/get_pizza_list")
-async def get_pizza_list():
+
+
+async def get_pizza_list_service():
     async with db_session() as session:
         async with session.begin():
             try:
@@ -57,9 +51,9 @@ async def get_pizza_list():
                 print("error while getting pizza list:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": pizzas}
-         
-@admin_router.put("/update_pizza")               
-async def update_pizza(id: UUID, pizza_data: Pizzaedit):
+
+
+async def update_pizza_service(id: UUID, pizza_data: Pizzaedit):
     async with db_session() as session:
         async with session.begin():
             pizza_data_interact = PizzaInteract(session)
@@ -79,11 +73,11 @@ async def update_pizza(id: UUID, pizza_data: Pizzaedit):
             except Exception as e:
                 print("Error while updating pizza:", e)
                 return {"status": 500, "message": "Internal server error"}
-            
-            return {"status": 200, "data": updated_pizza}             
-                
-@admin_router.post("/get_order_list")
-async def get_all_orders():
+
+            return {"status": 200, "data": updated_pizza}
+
+
+async def get_order_list_service():
     async with db_session() as session:
         async with session.begin():
             try:
@@ -94,8 +88,8 @@ async def get_all_orders():
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": orders}
 
-@admin_router.get("/get_orders_by_status")
-async def get_orders_by_status(status: int):
+
+async def get_orders_by_status_service(status: int):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -105,4 +99,3 @@ async def get_orders_by_status(status: int):
                 print("error while getting orders by status:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": orders}
-        

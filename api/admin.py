@@ -47,3 +47,21 @@ async def get_all_orders():
 async def get_orders_by_status(status: int):
     result = await admin_service.get_orders_by_status_service(status)
     return result
+
+
+@admin_router.get("/get_order_content")
+async def get_order_content(order_id: UUID):
+    result = await admin_service.get_order_content_service(order_id)
+    return result
+
+
+@admin_router.put("/update_order_status")
+async def update_order_status(order_id: UUID, status: int):
+    result = await admin_service.update_order_status_service(order_id, status)
+    return result
+
+
+@admin_router.put("/pizza_unavailable")
+async def pizza_unavailable(id: UUID):
+    result = await admin_service.pizza_unavailable_service(id)
+    return result

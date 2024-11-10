@@ -2,7 +2,7 @@ import uuid
 from uuid import UUID
 from api.models import Pizza, Pizzaedit
 from db.db import db_session
-from db.db_repository import OrderInteract, PizzaInteract
+from db.db_repository import OrderInteract, PizzaInteract, OrderContentInteract
 
 
 async def create_pizza_service(pizza: Pizza):
@@ -99,3 +99,41 @@ async def get_orders_by_status_service(status: int):
                 print("error while getting orders by status:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": orders}
+
+
+async def get_order_content_service(id: UUID):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                orderc_interact = OrderContentInteract(session)
+                content = await orderc_interact.get_order_content(order_id=id)
+            except Exception as e:
+                print("error while getting order content:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "data": content}
+
+
+async def update_order_status_service(id: UUID, status: int):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                if status < 0 or status > 4:
+                    return {"status": 400, "message": "Invalid status"}
+                order_interact = OrderInteract(session)
+                await order_interact.update_order_status(id=id, status=status)
+            except Exception as e:
+                print("error while updating order status:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "message": "Order status updated successfully"}
+
+
+async def pizza_unavailable_service(id: UUID):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                pizza_interact = PizzaInteract(session)
+                new_pizza = await pizza_interact.update_pizza(id=id, available=False, name=None, cost=None, description=None, image=None)
+            except Exception as e:
+                print("error while updating pizza status:", e)
+                return {"status": 500, "message": "Internal server error"}
+            return {"status": 200, "data": new_pizza}

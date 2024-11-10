@@ -2,7 +2,7 @@ from typing import Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import joinedload
-from sqlalchemy import Boolean, select
+from sqlalchemy import Boolean, select, delete
 from datetime import datetime
 from db.db import User, Auth, Order, Pizza, OrderContent
 
@@ -101,6 +101,12 @@ class OrderInteract:
         await self.db_session.commit()
         return order
 
+    async def update_order_status(self, id: UUID, status: int):
+        order = await self.db_session.get(Order, id)
+        order.status = status
+        await self.db_session.commit()
+        return True
+
 
 class PizzaInteract:
     def __init__(self, db_session: AsyncSession):
@@ -119,6 +125,7 @@ class PizzaInteract:
     async def delete_pizza(self, id: UUID) -> bool:
         pizza = await self.db_session.get(Pizza, id)
         if pizza:
+            await self.db_session.execute(delete(OrderContent).where(OrderContent.pizza_id == id))
             await self.db_session.delete(pizza)
             await self.db_session.commit()
             return True

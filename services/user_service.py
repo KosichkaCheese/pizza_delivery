@@ -1,8 +1,8 @@
 import uuid
 from uuid import UUID
 from api.models import Usercreate, Useredit
-from db.db import UserInteract, db_session
-from db.db_repository import AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract
+from db.db import db_session
+from db.db_repository import AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract, UserInteract
 from datetime import datetime
 
 

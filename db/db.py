@@ -1,11 +1,10 @@
-from typing import AsyncGenerator, Optional
-from sqlalchemy.ext.declarative import declarative_base
+from typing import AsyncGenerator
+# from sqlalchemy.ext.declarative import declarative_base
 import settings
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.orm import sessionmaker, relationship, declarative_base
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, DECIMAL, Integer, Text, select
-from datetime import datetime
+from sqlalchemy import Column, String, Boolean, ForeignKey, DateTime, DECIMAL, Integer, Text
 
 ADMIN = True
 USER = False

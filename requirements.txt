@@ -7,3 +7,6 @@ envparse
 psycopg2
 asyncpg
 alembic
+pytest
+pytest-asyncio
+pytest-mock

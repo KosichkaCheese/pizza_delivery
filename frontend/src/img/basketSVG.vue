@@ -6,6 +6,6 @@
 </template>
 <script>
 export default {
-  name: 'busketSVG',
+  name: 'basketSVG',
 }
 </script>

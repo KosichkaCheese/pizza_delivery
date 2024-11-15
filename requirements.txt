@@ -7,3 +7,10 @@ envparse
 psycopg2
 asyncpg
 alembic
+npm
+vue
+babel-loader --save-dev @babel/core @babel/preset-env 
+-g @vue/cli   
+babel-eslint --save-dev     
+file-loader --save-dev    
+# webpack webpack-cli file-loader --save-dev    

@@ -5,8 +5,8 @@
         <LkSVG></LkSVG>
       </div>
       <LogoSVG></LogoSVG>
-      <div class="busket_button">
-        <BusketSVG></BusketSVG>
+      <div class="basket_button">
+        <BasketSVG></BasketSVG>
       </div>
     </div>
     <div class="page__menu-title">
@@ -18,7 +18,7 @@
     </div>
     <div class="page__menu-content-pizzas">
       <template v-for="i in (0, 4)">
-        <PizzaCard :key="i"></PizzaCard>
+        <VPizzaCard :key="i"></VPizzaCard>
       </template>
     </div>
   </div>
@@ -27,19 +27,19 @@
 <script>
 
 import LogoSVG from '@/img/logoSVG.vue';
-import BusketSVG from '@/img/busketSVG.vue';
+import BasketSVG from '@/img/basketSVG.vue';
 import LkSVG from '@/img/lkSVG.vue';
 import TitleIconSVG from '@/img/titleIconSVG.vue';
-import PizzaCard from './components/PizzaCard.vue';
+import VPizzaCard from './components/VPizzaCard.vue';
 
 export default {
   name: 'App',
   components: {
     LogoSVG,
-    BusketSVG,
+    BasketSVG,
     LkSVG,
     TitleIconSVG,
-    PizzaCard,
+    VPizzaCard,
   }
 }
 </script>
@@ -78,7 +78,7 @@ body {
   align-items: center;
   justify-content: space-between;
 }
-.busket_button,.lk_button{
+.basket_button,.lk_button{
   background-color: #FFE9C1;
   border: 4px solid #CA151C;
   border-radius: 50px;

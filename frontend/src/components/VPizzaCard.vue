@@ -15,7 +15,7 @@
 
 <script>
 export default {
-  name: 'PizzaCard',
+  name: 'VPizzaCard',
   // props: {
   //   msg: String
   // }

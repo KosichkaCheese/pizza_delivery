@@ -1,16 +1,12 @@
-from fastapi import APIRouter, Depends
 import uuid
 from uuid import UUID
-from models import Usercreate, Useredit, Pizza
-# from sqlalchemy.ext.asyncio import AsyncSession
-# from main import session
-from db import UserInteract, db_session, AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract
+from api.models import Usercreate, Useredit
+from db.db import db_session
+from db.db_repository import AuthInteract, OrderInteract, PizzaInteract, OrderContentInteract, UserInteract
 from datetime import datetime
 
-user_router = APIRouter(prefix="/users", tags=["users"])
 
-@user_router.post("/create_user")
-async def create_user(user: Usercreate, password: str):
+async def create_user_service(user: Usercreate, password: str):
     async with db_session() as session:
         async with session.begin():
             user_data = UserInteract(session)
@@ -18,9 +14,9 @@ async def create_user(user: Usercreate, password: str):
             try:
                 new_user = await user_data.create_user(
                     email=user.email,
-                    role=user.role, 
-                    name=user.name, 
-                    phone=user.phone, 
+                    role=user.role,
+                    name=user.name,
+                    phone=user.phone,
                     address=user.address
                 )
                 new_auth = await auth.create_auth(email=user.email, password=password)
@@ -30,9 +26,9 @@ async def create_user(user: Usercreate, password: str):
                 print("error while creating user:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": new_user}
-    
-@user_router.get("/get_user")
-async def get_user(email: str):
+
+
+async def get_user_service(email: str):
     async with db_session() as session:
         async with session.begin():
             user_data = UserInteract(session)
@@ -46,8 +42,8 @@ async def get_user(email: str):
             else:
                 return {"status": 404, "message": "User not found"}
 
-@user_router.delete("/delete_user")
-async def delete_user(email: str):
+
+async def delete_user_service(email: str):
     async with db_session() as session:
         async with session.begin():
             user_data = UserInteract(session)
@@ -64,9 +60,9 @@ async def delete_user(email: str):
                 return {"status": 200, "message": "User deleted successfully"}
             else:
                 return {"status": 500, "message": "Internal server error"}
-        
-@user_router.put("/update_user")
-async def update_user(user: Useredit):
+
+
+async def update_user_service(user: Useredit):
     async with db_session() as session:
         async with session.begin():
             user_data = UserInteract(session)
@@ -74,20 +70,20 @@ async def update_user(user: Useredit):
                 cur_user = await user_data.get_user(email=user.email)
                 if not cur_user:
                     return {"status": 404, "message": "User not found"}
-                
+
                 updated_user = await user_data.update_user(
                     email=user.email,
-                    name=user.name, 
-                    phone=user.phone, 
+                    name=user.name,
+                    phone=user.phone,
                     address=user.address
                 )
             except Exception as e:
                 print("error while updating user:", e)
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": updated_user}
-        
-@user_router.get("/check_auth")
-async def check_auth(email: str, password: str):
+
+
+async def check_auth_service(email: str, password: str):
     async with db_session() as session:
         async with session.begin():
             auth = AuthInteract(session)
@@ -100,9 +96,9 @@ async def check_auth(email: str, password: str):
                 return {"status": 200, "message": "Authentication successful"}
             else:
                 return {"status": 401, "message": "Authentication failed"}
-            
-@user_router.post("/add_to_cart")
-async def add_to_cart(email: str, pizza_id: UUID, count: int):
+
+
+async def add_to_cart_service(email: str, pizza_id: UUID, count: int):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -122,8 +118,8 @@ async def add_to_cart(email: str, pizza_id: UUID, count: int):
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "message": "Pizza added to cart"}
 
-@user_router.get("/get_user_orders")
-async def get_user_orders(email: str):
+
+async def get_user_orders_service(email: str):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -134,8 +130,8 @@ async def get_user_orders(email: str):
                 return {"status": 500, "message": "Internal server error"}
             return {"status": 200, "data": orders}
 
-@user_router.put("/place_order")
-async def place_order(email: str, address: str=None, phone: str=None):
+
+async def place_order_service(email: str, address: str = None, phone: str = None):
     async with db_session() as session:
         async with session.begin():
             try:
@@ -154,10 +150,10 @@ async def place_order(email: str, address: str=None, phone: str=None):
                 order_content = await order_content_interact.get_order_content(order_id=cur_order.id)
                 new_summ = 0
                 for order_content in order_content:
-                    new_summ += order_content["pizza_cost"] * order_content["count"]
+                    new_summ += order_content["pizza_cost"] * \
+                        order_content["count"]
                 cur_time = datetime.now()
                 res = await order.place_order(id=cur_order.id, time=cur_time, summ=new_summ, address=address, phone=phone)
                 return {"status": 200, "data": res}
             except Exception as e:
                 print("error while placing order:", e)
-

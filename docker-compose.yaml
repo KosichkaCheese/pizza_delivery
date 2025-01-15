@@ -36,5 +36,3 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: catalogue_db
-    volumes:
-      - ./catalogue_db:/var/lib/postgresql/data

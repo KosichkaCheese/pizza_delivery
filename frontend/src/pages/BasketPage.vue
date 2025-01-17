@@ -1,12 +1,16 @@
 <template>
     <div class="basket-page">
-        <ArrowLeftSVG></ArrowLeftSVG>
-        <div class="basket-page__title">
+        <div class="basket-page__header">
+          <RouterLink to="/" class="back_button">
+            <ArrowLeftSVG></ArrowLeftSVG>
+          </RouterLink>
+          <div class="basket-page__title">
             <span>корзина</span>
+          </div>
         </div>
         <VPizzaBasketCard></VPizzaBasketCard>
         <div class="card-button">
-          <span class="card-button__title">очистить корзину</span>
+        <span class="card-button__title">очистить корзину</span>
         </div>
         <span class="basket-page__sum">итого: 700 руб.</span>
         <div class="card-button">
@@ -30,11 +34,17 @@ export default {
 </script>
 
 <style>
+.basket-page__header{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  /* justify-content: center; */
+}
 .basket-page__title{
   background-color: #FFE9C1;
   border: 4px solid #CA151C;
   border-radius: 50px;
-  width: 95%;
+  width: 100%;
   height: auto;
   color: #CA151C;
   margin: 30px 50px;

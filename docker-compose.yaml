@@ -36,3 +36,27 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: catalogue_db
+
+  profile-service:
+    container_name: "profile-service"
+    build:
+      context: ./profile_service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '8792:8000'
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@profile-db:5432/profile_db
+    volumes:
+      - ./profile_service:/app
+
+  profile-db:
+    container_name: "profile-db"
+    image: postgres
+    restart: always
+    ports:
+      - '5439:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: profile_db

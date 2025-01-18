@@ -3,7 +3,6 @@ from uuid import UUID
 from api.models import Pizza, Pizzaedit
 from db.db import db_session
 from db.db_repository import PizzaInteract
-import httpx
 
 
 async def create_pizza_service(pizza: Pizza):
@@ -22,10 +21,6 @@ async def delete_pizza_service(id: UUID):
     async with db_session() as session:
         async with session.begin():
             try:
-                # with httpx.Client() as client:
-                #     response = await client.get("http://127.0.0.1:8790/delete_from_orders", params={"id": id})
-                #     if response["status"] != 200:
-                #         return {"status": 500, "message": "Internal server error"}
                 pizza_interact = PizzaInteract(session)
                 pizza = await pizza_interact.get_pizza(id=id)
                 if not pizza:

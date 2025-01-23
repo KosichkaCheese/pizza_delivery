@@ -1,11 +1,6 @@
 <template>
     <div class="LK-page">
-        <RouterLink to="/">
-          <ArrowLeftSVG></ArrowLeftSVG>
-        </RouterLink>
-        <div class="LK-page__title">
-            <span>личный кабинет</span>
-        </div>
+        <VHeader :title="'личный кабинет'"></VHeader>
         <!-- <VPizzaBasketCard></VPizzaBasketCard>
         <div class="card-button">
           <span class="card-button__title">очистить корзину</span>
@@ -19,32 +14,34 @@
 
 <script>
 
-import ArrowLeftSVG from '@/img/arrowLeftSVG.vue';
+// import ArrowLeftSVG from '@/img/arrowLeftSVG.vue';
+import VHeader from '../components/VHeader.vue';
 // import VPizzaBasketCard from '../components/VPizzaBasketCard.vue'
 
 export default {
-  name: 'LKPage',
-  components: {
-    ArrowLeftSVG,
-    // VPizzaBasketCard,
-  }
+    name: 'LKPage',
+    components: {
+        // ArrowLeftSVG,
+        VHeader,
+        // VPizzaBasketCard,
+    }
 }
 </script>
 
 <style>
 .LK-page__title{
-  background-color: #FFE9C1;
-  border: 4px solid #CA151C;
-  border-radius: 50px;
-  width: 95%;
-  height: auto;
-  color: #CA151C;
-  margin: 30px 50px;
-  text-align: center;
-  font-family: Nunito;
-  font-size: 2.7rem;
-  font-weight: 800;
-  justify-self: center;
+    background-color: #FFE9C1;
+    border: 4px solid #CA151C;
+    border-radius: 50px;
+    width: 95%;
+    height: auto;
+    color: #CA151C;
+    margin: 30px 50px;
+    text-align: center;
+    font-family: Nunito;
+    font-size: 2.7rem;
+    font-weight: 800;
+    justify-self: center;
 }
 
 </style>

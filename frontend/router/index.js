@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-// import { createRouter, createWebHistory } from 'vue-router';
 import BasketPage from '../src/pages/BasketPage.vue';
 import HomePage from '../src/pages/HomePage.vue';
 import LKPage from '../src/pages/LKPage.vue';

@@ -1,14 +1,27 @@
 <template>
-  <div class="pizza-basket-card">
-    
-    <img src="../img/pizza.png" class="pizza_pic"/>
-    <span class="card-title">пепперони</span>
-    <span class="card-price">450 руб.</span>
-    <ArrowLeftSVG></ArrowLeftSVG>
-    <span class="card-amount">2 шт.</span>
-    <ArrowRightSVG></ArrowRightSVG>
-    <TrashSVG></TrashSVG>
-  </div>
+    <div class="pizza-basket-card">
+        <div class="pizza-basket-card__pic">
+            <img src="../img/pizza.png" class="pizza_pic"/>
+        </div>
+        <div class="pizza-basket-card__content">
+            <div class="pizza-basket-card__content_up">
+                <span class="card-title">пепперони</span>
+                <span class="card-price">{{ pizzaPrice*amount }} руб.</span>
+            </div>
+            <div class="pizza-basket-card__content_down">
+                <div class="pizza-basket-card__content_down-amount">
+                    <div class="amount-button" @click="amount-=1">
+                        <ArrowLeftSVG :width="30" :height="30"></ArrowLeftSVG>
+                    </div>
+                    <span class="basket-card__amount">{{ amount }} шт.</span>
+                    <div class="amount-button" @click="amount+=1">
+                        <ArrowRightSVG :width="30" :height="30" @click="amount+=1"></ArrowRightSVG>
+                    </div>
+                </div>
+                <TrashSVG></TrashSVG>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -17,62 +30,79 @@ import ArrowRightSVG from '@/img/arrowRightSVG.vue';
 import TrashSVG from '@/img/trashSVG.vue';
 
 export default {
-  name: 'VPizzaBasketCard',
-  components: {
-    ArrowLeftSVG,
-    ArrowRightSVG,
-    TrashSVG,
-  }
+    name: 'VPizzaBasketCard',
+    components: {
+        ArrowLeftSVG,
+        ArrowRightSVG,
+        TrashSVG,
+    },
+    data() {
+        return {
+            amount: 1,
+            pizzaPrice: 450,
+        };
+    },
+    methods: {
+        // get price(){
+        //     return this.pizzaPrice * this.amount;
+        // }
+    }
 }
 
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.pizza-card{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 390px;
-  width: 250px;
-  background-color: #FFEFD2;
-  border: 3px solid #BF0200;
-  border-radius: 30px;
-  padding: 20px;
+.pizza-basket-card{
+    display: flex;
+    align-items: center;
+    background-color: #FFEFD2;
+    border: 3px solid #BF0200;
+    border-radius: 30px;
+    padding: 20px;
+    font-family: Nunito;
+    color: #CA151C;
+    margin: 10px 90px;
+}
+.pizza-basket-card__pic{
+    justify-self: left;
 }
 .pizza_pic{
-  height: 235px;
-  width: 224px;
+    height: 145px;
+    width: 145px;
+}
+.pizza-basket-card__content{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 20vh;
+    justify-content: space-between;
+    margin-left: 20px;
+}
+.pizza-basket-card__content_up{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.pizza-basket-card__content_down{
+    display: flex;
+    justify-content: space-between;
+    min-height: 40px;
+}
+.basket-card__amount{
+    margin: 0 7px;
+    font-size: 1.5rem;
+    font-weight: 300;
+}
+.pizza-basket-card__content_down-amount, .amount-button{
+    display: flex;
+    align-items: center;
 }
 .card-title{
-  font-family: Nunito;
-  font-size: 2.2rem;
-  color: #CA151C;
+    font-size: 2.2rem;
 }
 .card-price{
-  font-family: Nunito;
-  font-size: 1.7rem;
-  color: #CA151C;
-  font-weight: 300;
-}
-.card-button{
-  background-color: #BF0200;
-  width: 100%;
-  text-align: center;
-  border-radius: 25px;
-  padding: 8px 0px;
-  margin-top: 15px;
-}
-.card-button__title{
-  font-family: Nunito;
-  font-size: 1.5rem;
-  color: #FFF9ED;
-  font-weight: 300;
-}
-svg{
-  align-self: flex-end;
-  /* margin: 0px 15px; */
-  margin-bottom: -30px;
+    font-size: 1.7rem;
+    font-weight: 500;
 }
 </style>

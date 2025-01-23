@@ -17,10 +17,25 @@
       <span class="mini-title">супер популярное!</span>
     </div>
     <div class="page__menu-content-pizzas">
-      <template v-for="i in (0, 4)">
-        <VPizzaCard :key="i"></VPizzaCard>
+      <template>
+        <div class="pizza-container" >
+            <VPizzaCard 
+                class="pizza-card" 
+                v-for="(pizza, index) in pizzas" 
+                :key="index" 
+                :name="pizza.name" 
+                :price="pizza.cost"
+                @openModal="openModal(pizza.description, pizza.id)"
+            ></VPizzaCard>
+        </div>
       </template>
     </div>
+    <VPizzaInfoModal
+      :isVisible="isModalVisible"
+      :message="modalMessage"
+      :id="pizzaId"
+      @close="closeModal"
+    />
   </div>
 </template>
 
@@ -31,6 +46,8 @@ import BasketSVG from '@/img/basketSVG.vue';
 import LkSVG from '@/img/lkSVG.vue';
 import TitleIconSVG from '@/img/titleIconSVG.vue';
 import VPizzaCard from '../components/VPizzaCard.vue';
+import VPizzaInfoModal from '../components/VPizzaInfoModal.vue';
+import axios from 'axios';
 
 export default {
   name: 'HomePage',
@@ -40,7 +57,43 @@ export default {
     LkSVG,
     TitleIconSVG,
     VPizzaCard,
-  }
+    VPizzaInfoModal,
+  },
+  data() {
+        return {
+            pizzas: [], // Массив для хранения пицц
+            error: null, // Переменная для хранения ошибок
+            isModalVisible: false,
+            modalTitle: '',
+            modalMessage: '',
+            pizzaId: null,
+        };
+    },
+    methods: {
+        async test_request() {
+            try {
+                const response = await axios.get('http://localhost:8001/admin/get_pizza_list'); // Замените на ваш URL
+                this.pizzas = response.data.data; // Сохраняем данные в состоянии компонента
+                // console.log(this.pizzas);
+            } catch (error) {
+                this.error = 'Ошибка при получении пицц: ' + error.message; // Обработка ошибок
+                console.error('Ошибка при получении пицц:', error);
+            }
+        },
+        openModal(description, id) {
+            this.modalMessage = description;
+            this.pizzaId = id;
+            this.isModalVisible = true;
+
+            // console.log(333);
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        }
+    },
+    created(){
+        this.test_request();
+    }
 }
 </script>
 
@@ -122,4 +175,12 @@ body {
   justify-content: space-evenly;
   margin: 0px 50px;
 }
+.pizza-container {
+  display: flex;
+  /* display: flex; */
+  justify-content: space-between;
+  margin: 0 50px;
+  flex-wrap: wrap;
+}
+
 </style>

@@ -2,34 +2,85 @@ version: '3.9'
 
 services:
 
-  fastapi:
-    container_name: "fastapi"
+  main-service:
+    container_name: "main-service"
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ./main_service
+      dockerfile: Dockerfile
     restart: always
     ports:
       - '8000:8000'
-    environment:
-      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/pizza
     volumes:
-      - .:/app
-    depends_on:
-      - db
+      - ./main_service:/app
 
-  db:
-    container_name: "database"
+  catalog-service:
+    container_name: "catalogue-service"
+    build:
+      context: ./catalogue_service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '8791:8000'
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@catalog-db:5432/catalogue_db
+    volumes:
+      - ./catalogue_service:/app
+
+  catalog-db:
+    container_name: "catalogue-db"
     image: postgres
     restart: always
+    ports:
+      - '5438:5432'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: pizza
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    ports:
-      - '5438:5432'
+      POSTGRES_DB: catalogue_db
 
-volumes:
-  .:
-  pgdata:
+  profile-service:
+    container_name: "profile-service"
+    build:
+      context: ./profile_service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '8792:8000'
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@profile-db:5432/profile_db
+    volumes:
+      - ./profile_service:/app
+
+  profile-db:
+    container_name: "profile-db"
+    image: postgres
+    restart: always
+    ports:
+      - '5439:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: profile_db
+
+  orders-service:
+    container_name: "order-service"
+    build:
+      context: ./orders_service
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '8793:8000'
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://postgres:postgres@orders-db:5432/orders_db
+    volumes:
+      - ./orders_service:/app
+
+  orders-db:
+    container_name: "orders-db"
+    image: postgres
+    restart: always
+    ports:
+      - '5440:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: orders_db

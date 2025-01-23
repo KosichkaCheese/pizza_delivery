@@ -58,17 +58,17 @@ async def check_auth_service(email: str, password: str):
         except Exception as e:
             print("error while checking auth:", e)
             return {"status": 500, "message": "Internal server error"}
-        return response
+        return response.json()
 
 
 async def add_to_cart_service(email: str, pizza_id: UUID, count: int):
     async with httpx.AsyncClient() as client:
         try:
-            response = await client.post(f"{ORDERS_SERVICE}/add_to_cart", params={"email": email, "pizza_id": pizza_id, "count": count})
+            response = await client.post(f"{ORDERS_SERVICE}/add_to_cart/{pizza_id}", params={"email": email, "count": count})
         except Exception as e:
             print("error while adding to cart:", e)
             return {"status": 500, "message": "Internal server error"}
-        return response
+        return response.json()
 
 
 async def get_user_orders_service(email: str):
@@ -78,7 +78,7 @@ async def get_user_orders_service(email: str):
         except Exception as e:
             print("error while getting orders:", e)
             return {"status": 500, "message": "Internal server error"}
-        return response
+        return response.json()
 
 
 async def place_order_service(email: str, address: str = None, phone: str = None):
@@ -86,7 +86,7 @@ async def place_order_service(email: str, address: str = None, phone: str = None
         try:
             params = {"email": email, "address": address, "phone": phone}
             params = {k: v for k, v in params.items() if v is not None}
-            response = await client.post(f"{ORDERS_SERVICE}/place_order", params=params)
+            response = await client.put(f"{ORDERS_SERVICE}/place_order", params=params)
         except Exception as e:
             print("error while placing order:", e)
-        return response
+        return response.json()

@@ -91,3 +91,22 @@ class OrderContentInteract:
     async def delete_from_cart(self, order_id: UUID, pizza_id: UUID):
         await self.db_session.execute(delete(OrderContent).where(OrderContent.order_id == order_id, OrderContent.pizza_id == pizza_id))
         return True
+
+    async def check_order_content(self, order_id: UUID, pizza_id: UUID):
+        res = await self.db_session.execute(select(OrderContent).where(OrderContent.order_id == order_id, OrderContent.pizza_id == pizza_id))
+        order_content = res.scalars().first()
+        if order_content:
+            return True
+        return False
+
+    async def increase_count(self, order_id: UUID, pizza_id: UUID, count: int):
+        pizza = await self.db_session.execute(select(OrderContent).where(OrderContent.order_id == order_id, OrderContent.pizza_id == pizza_id))
+        pizza = pizza.scalars().first()
+        pizza.count += count
+        return True
+
+    async def decrease_count(self, order_id: UUID, pizza_id: UUID):
+        pizza = await self.db_session.execute(select(OrderContent).where(OrderContent.order_id == order_id, OrderContent.pizza_id == pizza_id))
+        pizza = pizza.scalars().first()
+        pizza.count -= 1
+        return True

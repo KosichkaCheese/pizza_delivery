@@ -58,3 +58,15 @@ async def get_user_orders(email: str):
 async def place_order(email: str, address: str = None, phone: str = None):
     result = await user_service.place_order_service(email, address, phone)
     return result
+
+
+@user_router.put("{order_id}/plus_pizza/{pizza_id}")
+async def plus_pizza(pizza_id: UUID, order_id: UUID):
+    result = await user_service.plus_pizza_service(pizza_id, order_id)
+    return result
+
+
+@user_router.put("{order_id}/minus_pizza/{pizza_id}")
+async def minus_pizza(pizza_id: UUID, order_id: UUID):
+    result = await user_service.minus_pizza_service(pizza_id, order_id)
+    return result

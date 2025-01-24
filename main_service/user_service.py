@@ -100,3 +100,23 @@ async def delete_from_cart_service(email: str, pizza_id: UUID):
             print("error while deleting from cart:", e)
             return {"status": 500, "message": "Internal server error"}
         return response.json()
+
+
+async def minus_pizza_service(pizza_id: UUID, order_id: UUID):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.put(f"{ORDERS_SERVICE}/{order_id}/minus_pizza/{pizza_id}")
+        except Exception as e:
+            print("error while deleting pizza:", e)
+            return {"status": 500, "message": "Internal server error"}
+        return response.json()
+
+
+async def plus_pizza_service(pizza_id: UUID, order_id: UUID):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.put(f"{ORDERS_SERVICE}/{order_id}/plus_pizza/{pizza_id}")
+        except Exception as e:
+            print("error while adding pizza:", e)
+            return {"status": 500, "message": "Internal server error"}
+        return response.json()

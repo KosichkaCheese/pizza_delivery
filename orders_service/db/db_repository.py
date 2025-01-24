@@ -56,6 +56,11 @@ class OrderInteract:
         await self.db_session.commit()
         return True
 
+    async def change_summ(self, id: UUID, summ: float):
+        order = await self.db_session.get(Order, id)
+        order.summ = summ
+        return True
+
 
 class OrderContentInteract:
     def __init__(self, db_session: AsyncSession):

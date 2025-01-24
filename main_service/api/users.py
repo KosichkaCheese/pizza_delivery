@@ -42,6 +42,12 @@ async def add_to_cart(email: str, pizza_id: UUID, count: int):
     return result
 
 
+@user_router.delete("/delete_from_cart")
+async def delete_from_cart(email: str, pizza_id: UUID):
+    result = await user_service.delete_from_cart_service(email, pizza_id)
+    return result
+
+
 @user_router.get("/get_user_orders")
 async def get_user_orders(email: str):
     result = await user_service.get_user_orders_service(email)

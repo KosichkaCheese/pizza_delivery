@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.dialects.postgresql import UUID
-from sqlalchemy import select
+from sqlalchemy import select, delete
 from datetime import datetime
 from db.db import Order, OrderContent
 import httpx
@@ -87,3 +87,7 @@ class OrderContentInteract:
                 "count": order_content.count
             })
         return res
+
+    async def delete_from_cart(self, order_id: UUID, pizza_id: UUID):
+        await self.db_session.execute(delete(OrderContent).where(OrderContent.order_id == order_id, OrderContent.pizza_id == pizza_id))
+        return True

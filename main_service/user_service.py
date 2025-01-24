@@ -90,3 +90,13 @@ async def place_order_service(email: str, address: str = None, phone: str = None
         except Exception as e:
             print("error while placing order:", e)
         return response.json()
+
+
+async def delete_from_cart_service(email: str, pizza_id: UUID):
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.delete(f"{ORDERS_SERVICE}/delete_from_cart/{pizza_id}", params={"email": email})
+        except Exception as e:
+            print("error while deleting from cart:", e)
+            return {"status": 500, "message": "Internal server error"}
+        return response.json()

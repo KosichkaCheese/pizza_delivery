@@ -49,3 +49,9 @@ async def get_order_content(order_id: UUID):
 async def update_order_status(order_id: UUID, status: int):
     result = await orders.update_order_status_service(order_id, status)
     return result
+
+
+@app.delete("/delete_from_cart/{pizza_id}")
+async def delete_from_cart(email: str, pizza_id: UUID):
+    result = await orders.delete_from_cart_service(email, pizza_id)
+    return result

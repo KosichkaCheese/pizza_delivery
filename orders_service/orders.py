@@ -47,6 +47,33 @@ async def add_to_cart_service(email: str, pizza_id: UUID, count: int):
             return {"status": 200, "message": "Pizza added to cart"}
 
 
+async def delete_from_cart_service(email: str, pizza_id: UUID):
+    async with db_session() as session:
+        async with session.begin():
+            try:
+                order = OrderInteract(session)
+                cur_order = await order.current_order(email=email)
+                if not cur_order:
+                    return {"status": 404, "message": "cart is empty"}
+                order_content_interact = OrderContentInteract(session)
+                res = await order_content_interact.delete_from_cart(order_id=cur_order.id, pizza_id=pizza_id)
+
+                order_content = await order_content_interact.get_order_content(order_id=cur_order.id)
+                new_summ = 0
+                for order_content in order_content:
+                    new_summ += order_content["pizza_cost"] * \
+                        order_content["count"]
+                await order.change_summ(id=cur_order.id, summ=new_summ)
+
+            except Exception as e:
+                print("error while deleting from cart:", e)
+                return {"status": 500, "message": "Internal server error"}
+            if res:
+                return {"status": 200, "message": "Pizza deleted from cart"}
+            else:
+                return {"status": 404, "message": "Pizza not found in cart"}
+
+
 async def get_user_orders_service(email: str):
     async with db_session() as session:
         async with session.begin():

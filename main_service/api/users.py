@@ -42,6 +42,12 @@ async def add_to_cart(email: str, pizza_id: UUID, count: int):
     return result
 
 
+@user_router.delete("/delete_from_cart")
+async def delete_from_cart(email: str, pizza_id: UUID):
+    result = await user_service.delete_from_cart_service(email, pizza_id)
+    return result
+
+
 @user_router.get("/get_user_orders")
 async def get_user_orders(email: str):
     result = await user_service.get_user_orders_service(email)
@@ -51,4 +57,16 @@ async def get_user_orders(email: str):
 @user_router.put("/place_order")
 async def place_order(email: str, address: str = None, phone: str = None):
     result = await user_service.place_order_service(email, address, phone)
+    return result
+
+
+@user_router.put("{order_id}/plus_pizza/{pizza_id}")
+async def plus_pizza(pizza_id: UUID, order_id: UUID):
+    result = await user_service.plus_pizza_service(pizza_id, order_id)
+    return result
+
+
+@user_router.put("{order_id}/minus_pizza/{pizza_id}")
+async def minus_pizza(pizza_id: UUID, order_id: UUID):
+    result = await user_service.minus_pizza_service(pizza_id, order_id)
     return result

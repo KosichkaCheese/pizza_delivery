@@ -36,6 +36,9 @@ async def add_to_cart_service(email: str, pizza_id: UUID, count: int):
                 if not cur_order:
                     await order.create_order(id=uuid.uuid4(), user_email=email, time=datetime.now(), summ=(pizza["cost"]*count), address=user["address"], phone=user["phone"])
                     cur_order = await order.current_order(email=email)
+                else:
+                    summ = float(cur_order.summ) + (pizza["cost"]*count)
+                    await order.change_summ(id=cur_order.id, summ=summ)
                 order_content = OrderContentInteract(session)
                 await order_content.add_order_content(order_id=cur_order.id, pizza_id=pizza_id, count=count, id=uuid.uuid4())
             except Exception as e:

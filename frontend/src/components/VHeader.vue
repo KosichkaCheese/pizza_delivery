@@ -1,6 +1,6 @@
 <template>
     <div class="page__header">
-        <RouterLink to="/" class="back_button">
+        <RouterLink :to="toLink" class="back_button">
             <ArrowLeftSVG :height="50" :width="50"></ArrowLeftSVG>
         </RouterLink>
         <div class="page__title">
@@ -18,7 +18,8 @@ export default {
         ArrowLeftSVG,
     },
     props:{
-        title: String
+        title: String,
+        toLink: String,
     }
 }
 

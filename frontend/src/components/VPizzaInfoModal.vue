@@ -4,11 +4,13 @@
         <button @click="close" class="modal__close-button">
             <ExitSVG></ExitSVG>
         </button>
+        <h2>{{ title }}</h2>
         <div class="modal-content">
+            
             <img src="../img/pizza.png" class="modal-content__pizza_pic"/>
             <p class="modal-content__pizza_description"><b>описание: </b>{{ message }}</p>
         </div>
-        <VButtonRed class="modal-button" :title="'добавить в корзину'" @addToBasket="addToBasket"></VButtonRed>
+        <VButtonRed class="modal-button" :title="'добавить в корзину'" :click="'add'" @add="addToBasket"></VButtonRed>
     </div>
   </div>
 </template>
@@ -29,6 +31,10 @@ export default {
             type: Boolean,
             required: true
         },
+        title: {
+            type: String,
+            default: 'Пиццааа'
+        },
         message: {
             type: String,
             default: 'Это содержимое модального окна.'
@@ -39,7 +45,9 @@ export default {
     },
     methods: {
         close() {
+            this.$emit('openAddModal');
             this.$emit('close');
+            
         },
         async addToBasket(){
             try {
@@ -49,6 +57,8 @@ export default {
                     count: 1,
                 }); 
                 console.log(response.data);
+                
+                this.close();
             } catch (error) {
                 this.error = 'Ошибка при получении пицц: ' + error.message; // Обработка ошибок
                 console.error('Ошибка при получении пицц:', error);
@@ -59,6 +69,9 @@ export default {
 </script>
 
 <style>
+h2{
+    margin: 0;
+}
 .modal-overlay {
     position: fixed;
     top: 0;

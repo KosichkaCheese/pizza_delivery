@@ -1,14 +1,20 @@
 <template>
-    <div class="button-white">
+    <button class="button-white"  @click="handleClick(click)">
         <span class="button-white__title">{{ title }}</span>
-    </div>
+    </button>
 </template>
 
 <script>
 export default {
     name: 'VButtonWhite',
     props: {
-        title: String
+        title: String,
+        click: String,
+    },
+    methods:{
+      handleClick(method){
+        this.$emit(method);
+      }
     }
   }
 </script>
@@ -16,10 +22,10 @@ export default {
 .button-white{
   border: solid 4px #BF0200;
   background-color: #FFF9ED;
-  width:fit-content;
   text-align: center;
   border-radius: 25px;
-  padding: 4px 20px;
+  padding: 6px 20px;
+  height: fit-content;
   margin-top: 15px;
 }
 .button-white__title{

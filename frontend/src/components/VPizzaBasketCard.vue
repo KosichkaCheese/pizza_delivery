@@ -5,17 +5,17 @@
         </div>
         <div class="pizza-basket-card__content">
             <div class="pizza-basket-card__content_up">
-                <span class="card-title">пепперони</span>
-                <span class="card-price">{{ pizzaPrice*amount }} руб.</span>
+                <span class="card-title">{{ name }}</span>
+                <span class="card-price">{{ cost }} руб.</span>
             </div>
             <div class="pizza-basket-card__content_down">
                 <div class="pizza-basket-card__content_down-amount">
-                    <div class="amount-button" @click="amount-=1">
+                    <div class="amount-button">
                         <ArrowLeftSVG :width="30" :height="30"></ArrowLeftSVG>
                     </div>
                     <span class="basket-card__amount">{{ amount }} шт.</span>
-                    <div class="amount-button" @click="amount+=1">
-                        <ArrowRightSVG :width="30" :height="30" @click="amount+=1"></ArrowRightSVG>
+                    <div class="amount-button">
+                        <ArrowRightSVG :width="30" :height="30"></ArrowRightSVG>
                     </div>
                 </div>
                 <TrashSVG></TrashSVG>
@@ -36,16 +36,10 @@ export default {
         ArrowRightSVG,
         TrashSVG,
     },
-    data() {
-        return {
-            amount: 1,
-            pizzaPrice: 450,
-        };
-    },
-    methods: {
-        // get price(){
-        //     return this.pizzaPrice * this.amount;
-        // }
+    props: {
+        name: String,
+        cost: Number,
+        amount: Number
     }
 }
 

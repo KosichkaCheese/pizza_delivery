@@ -25,7 +25,8 @@
                 :key="index" 
                 :name="pizza.name" 
                 :price="pizza.cost"
-                @openModal="openModal(pizza.description, pizza.id)"
+                :id="pizza.id"
+                @openModal="openModal(pizza.name, pizza.description, pizza.id)"
             ></VPizzaCard>
         </div>
       </template>
@@ -34,8 +35,15 @@
       :isVisible="isModalVisible"
       :message="modalMessage"
       :id="pizzaId"
+      :title="modalTitle"
       @close="closeModal"
+      @openAddModal="openAddModal"
     />
+    <VAddModal
+        :isVisible="isAddModalVisible"
+        :title="addModalTitle"
+        @close="closeAddModal"
+    ></VAddModal>
   </div>
 </template>
 
@@ -47,6 +55,7 @@ import LkSVG from '@/img/lkSVG.vue';
 import TitleIconSVG from '@/img/titleIconSVG.vue';
 import VPizzaCard from '../components/VPizzaCard.vue';
 import VPizzaInfoModal from '../components/VPizzaInfoModal.vue';
+import VAddModal from '../components/VAddModal.vue';
 import axios from 'axios';
 
 export default {
@@ -58,41 +67,52 @@ export default {
     TitleIconSVG,
     VPizzaCard,
     VPizzaInfoModal,
+    VAddModal,
   },
   data() {
         return {
-            pizzas: [], // Массив для хранения пицц
-            error: null, // Переменная для хранения ошибок
+            pizzas: [], 
+            error: null, 
             isModalVisible: false,
             modalTitle: '',
             modalMessage: '',
+            isAddModalVisible: false,
+            addModalTitle: '',
             pizzaId: null,
         };
     },
     methods: {
-        async test_request() {
+        async getPizzas() {
             try {
-                const response = await axios.get('http://localhost:8001/admin/get_pizza_list'); // Замените на ваш URL
-                this.pizzas = response.data.data; // Сохраняем данные в состоянии компонента
-                // console.log(this.pizzas);
+                const response = await axios.get('http://localhost:8001/admin/get_pizza_list');
+                this.pizzas = response.data.data; 
             } catch (error) {
-                this.error = 'Ошибка при получении пицц: ' + error.message; // Обработка ошибок
+                this.error = 'Ошибка при получении пицц: ' + error.message;
                 console.error('Ошибка при получении пицц:', error);
             }
         },
-        openModal(description, id) {
+        openModal(name, description, id) {
+            this.modalTitle = name
             this.modalMessage = description;
             this.pizzaId = id;
             this.isModalVisible = true;
-
-            // console.log(333);
         },
         closeModal() {
             this.isModalVisible = false;
-        }
+        },
+        
+        openAddModal() {
+            console.log(22);
+            this.addModalTitle = 'Товар добавлен в корзину!';
+            this.isAddModalVisible = true;
+        },
+        closeAddModal() {
+            this.isAddModalVisible = false;
+        },
+
     },
     created(){
-        this.test_request();
+        this.getPizzas();
     }
 }
 </script>
@@ -168,19 +188,16 @@ body {
 }
 .mini-title{
   margin-left: 20px;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 .page__menu-content-pizzas{
-  display: flex;
-  justify-content: space-evenly;
   margin: 0px 50px;
 }
 .pizza-container {
   display: flex;
-  /* display: flex; */
   justify-content: space-between;
-  margin: 0 50px;
+  margin: 0 60px;
   flex-wrap: wrap;
-}
+} 
 
 </style>

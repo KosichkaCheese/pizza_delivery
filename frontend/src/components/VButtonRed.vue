@@ -1,5 +1,5 @@
 <template>
-    <button class="button-red" @click="$emit('addToBasket')">
+    <button class="button-red" @click="handleClick(click)">
         <span class="button-red__title">{{ title }}</span>
     </button>
 </template>
@@ -8,7 +8,13 @@
 export default {
     name: 'VButtonRed',
     props: {
-        title: String
+        title: String,
+        click: String,
+    },
+    methods:{
+      handleClick(method){
+        this.$emit(method);
+      }
     }
   }
 </script>

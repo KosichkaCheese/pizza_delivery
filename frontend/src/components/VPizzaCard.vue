@@ -1,5 +1,5 @@
 <template>
-  <div class="pizza-card" @click="test_request">
+  <div class="pizza-card">
     <div class="pizza-card__info">
         <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" @click="$emit('openModal')">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M15 3C8.37258 3 3 8.37258 3 15C3 21.6274 8.37258 27 15 27C21.6274 27 27 21.6274 27 15C27 8.37258 21.6274 3 15 3ZM15 23.2505C14.1716 23.2505 13.5 22.579 13.5 21.7505V12.7985C13.5 11.97 14.1716 11.2985 15 11.2985C15.8284 11.2985 16.5 11.97 16.5 12.7985V21.7505C16.5 22.579 15.8284 23.2505 15 23.2505ZM13.5 8.24859C13.5 7.4207 14.1716 6.74957 15 6.74957C15.8284 6.74957 16.5 7.4207 16.5 8.24859C16.5 9.07647 15.8284 9.74761 15 9.74761C14.1716 9.74761 13.5 9.07647 13.5 8.24859Z" fill="#BF0200"/>
@@ -9,40 +9,62 @@
     <img src="../img/pizza.png" class="pizza_pic"/>
     <span class="card-title">{{ name }}</span>
     <span class="card-price">{{ price }}руб.</span>
-    <VButtonRed :title="'добавить'"></VButtonRed>
+    <VButtonRed :title="'добавить'" :click="'add'" @add="addToBasket"></VButtonRed>
+    <VAddModal
+        :isVisible="isModalVisible"
+        :title="modalTitle"
+        @close="closeModal"
+    ></VAddModal>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
 import VButtonRed from './VButtonRed.vue';
+import VAddModal from './VAddModal.vue';
 
 export default {
     name: 'VPizzaCard',
     components: {
         VButtonRed,
+        VAddModal,
     },
     data() {
         return {
             pizzas: [], // Массив для хранения пицц
-            error: null // Переменная для хранения ошибок
+            error: null, // Переменная для хранения ошибок
+            isModalVisible: false,
+            modalTitle: null,
         };
     },
     methods: {
-        async test_request() {
+        async addToBasket(){
             try {
-                const response = await axios.get('http://localhost:8001/admin/get_pizza_list'); // Замените на ваш URL
-                this.pizzas = response.data; // Сохраняем данные в состоянии компонента
-                // console.log(this.pizzas);
+                const response = await axios.post(`http://localhost:8001/users/add_to_cart?email=user%40example.com&pizza_id=${this.id}&count=1`, {
+                    email: 'user@example.com',
+                    pizza_id: this.id,
+                    count: 1,
+                }); 
+                console.log(response.data);
+                this.openAddModal();
             } catch (error) {
                 this.error = 'Ошибка при получении пицц: ' + error.message; // Обработка ошибок
                 console.error('Ошибка при получении пицц:', error);
             }
-        }
+        },
+        openAddModal() {
+            this.modalTitle = 'Товар добавлен в корзину!';
+            this.isModalVisible = true;
+        },
+        closeModal() {
+            this.isModalVisible = false;
+        },
+
     },
     props: {
         name: String,
         price: Number,
+        id: String,
     } 
   }
   // props: {
